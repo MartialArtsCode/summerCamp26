@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summer Camp 2026 | Panamerican Taekwondo Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1552072092-7f9b8d63efcb?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        #successMessage { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 scroll-smooth">
+
+    <div id="top"></div>
+
+    <header class="hero-bg h-80 flex items-center justify-center text-center text-white px-4">
+        <div>
+            <h1 class="text-5xl font-black uppercase tracking-tighter italic">Summer Camp 2026</h1>
+            <p class="text-2xl mt-2 text-red-500 font-bold tracking-widest uppercase">Panamerican Taekwondo Academy</p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-6 -mt-16">
+        <div class="grid lg:grid-cols-5 gap-8">
+            
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-8 rounded-2xl shadow-xl border-t-8 border-red-600">
+                    <h2 class="text-2xl font-bold mb-4">Camp Program</h2>
+                    <p class="text-slate-600 mb-6">Experience elite training, character building, and summer fun at our Winston-Salem academy.</p>
+                    
+                    <div class="space-y-4 text-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">📍</span>
+                            <span><strong>Address:</strong> 3712 Reynolda Rd</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">🗓️</span>
+                            <span><strong>Dates:</strong> June 22 - July 31</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">⏰</span>
+                            <span><strong>Time:</strong> 9:00 AM - 2:00 PM</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-slate-900 text-white p-5 rounded-xl">
+                        <p class="text-xs uppercase tracking-widest text-red-400 font-bold">Early Bird Special</p>
+                        <p class="text-3xl font-black mt-1">$275 <span class="text-sm font-normal text-slate-400">/ week</span></p>
+                        <p class="text-xs mt-2 italic text-slate-300">*Save $50 if registered by May 15th</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 bg-white p-8 rounded-2xl shadow-xl relative overflow-hidden">
+                
+                <div id="successMessage" class="text-center py-20">
+                    <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✓</div>
+                    <h2 class="text-3xl font-black text-slate-900">Registration Received!</h2>
+                    <p class="mt-4 text-slate-600 text-lg">Thank you for choosing Panamerican Academy. We will reach out via WhatsApp/Phone shortly to finalize details.</p>
+                    <button onclick="location.reload()" class="mt-8 font-bold text-red-600 hover:text-red-700 underline">Register another student</button>
+                </div>
+
+                <form id="campForm" action="https://formspree.io/f/mwvaqzyd" method="POST" class="space-y-5">
+                    <div class="border-b pb-4 mb-6">
+                        <h2 class="text-2xl font-black uppercase">Student Registration</h2>
+                        <p class="text-sm text-slate-500">Complete the form below to secure your spot.</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Parent Name</label>
+                            <input type="text" name="parent_name" required class="w-full p-3 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">WhatsApp / Phone</label>
+                            <input type="tel" name="phone" required placeholder="(336) 000-0000" class="w-full p-3 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Student Name & Age</label>
+                        <input type="text" name="student_info" required placeholder="e.g. Mateo, Age 10" class="w-full p-3 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Select Session</label>
+                        <select name="session" class="w-full p-3 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-red-500 outline-none appearance-none">
+                            <option value="Full Summer Package">Full Summer Package (Best Value)</option>
+                            <option value="Single Week(s)">Specific Week(s)</option>
+                            <option value="Daily Drop-in">Daily Drop-in Inquiry</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-lg shadow-lg shadow-red-200 transition duration-300 transform active:scale-95 uppercase tracking-widest">
+                        Submit Registration
+                    </button>
+                    
+                    <p class="text-[10px] text-center text-slate-400 uppercase leading-tight">By submitting, you agree to be contacted by Panamerican Taekwondo Academy regarding summer programs.</p>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="text-center py-12 text-slate-400 text-xs font-medium uppercase tracking-widest">
+        &copy; 2026 Panamerican Taekwondo Academy &bull; Winston-Salem, NC
+    </footer>
+
+    <script>
+        const form = document.getElementById('campForm');
+        const successMessage = document.getElementById('successMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerText = "PROCESSING...";
+
+            const data = new FormData(form);
+            
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: data,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    document.getElementById('top').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert("Submission error. Please check your connection.");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "SUBMIT REGISTRATION";
+                }
+            } catch (error) {
+                alert("Network error.");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "SUBMIT REGISTRATION";
+            }
+        };
+    </script>
+</body>
+</html>
