@@ -20,19 +20,19 @@
 
     <header class="img-src('assets/header.png') hero-bg h-80 flex items-center justify-center text-center text-white px-4">
         <div>
-            <h1 class="text-5xl font-black uppercase tracking-tighter italic, outline="red">Summer Camp 2026</h1>
+            <h1 class="text-5xl font-black uppercase tracking-tighter italic">Summer Camp 2026</h1>
             <p class="text-2xl mt-2 text-red-500 font-bold tracking-widest uppercase">Panamerican Taekwondo Academy</p>
         </div>
     </header>
 
     <main class="max-w-5xl mx-auto p-6 -mt-16">
         <div class="grid lg:grid-cols-5 gap-8">
-            
+
             <div class="lg:col-span-2 space-y-6">
                 <div class="bg-white p-8 rounded-2xl shadow-xl border-t-8 border-red-600">
                     <h2 class="text-2xl font-bold mb-4">Summer Camp Program</h2>
                     <p class="text-slate-600 mb-6">Experience elite training, character building, and summer fun at our Winston-Salem academy.</p>
-                    
+
                     <div class="space-y-4 text-sm">
                         <div class="flex items-center gap-3">
                             <span class="text-xl">📍</span>
@@ -57,7 +57,7 @@
             </div>
 
             <div class="lg:col-span-3 bg-white p-8 rounded-2xl shadow-xl relative overflow-hidden">
-                
+
                 <div id="successMessage" class="text-center py-20">
                     <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✓</div>
                     <h2 class="text-3xl font-black text-slate-900">Registration Received!</h2>
@@ -70,7 +70,7 @@
                         <h2 class="text-2xl font-black uppercase">Student Registration</h2>
                         <p class="text-sm text-slate-500">Complete the form below to secure your spot.</p>
                     </div>
-                    
+
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Parent Name</label>
@@ -96,10 +96,43 @@
                         </select>
                     </div>
 
-                    <button type="submit" id="submitBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-lg shadow-lg shadow-red-200 transition duration-300 transform active:scale-95 uppercase tracking-widest">
+                    <!-- Pay Now -->
+                    <div class="pt-2">
+                        <p class="block text-xs font-bold uppercase text-slate-500 mb-2">Pay now (choose one)</p>
+
+                        <div class="grid sm:grid-cols-3 gap-3">
+                            <a id="venmoLink"
+                               href="https://venmo.com/Carlos-Padilla-44"
+                               target="_blank" rel="noopener"
+                               class="text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-lg shadow transition">
+                                Pay with Venmo
+                            </a>
+
+                            <a id="cashappLink"
+                               href="https://cash.app/$CarlosPadFon"
+                               target="_blank" rel="noopener"
+                               class="text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-lg shadow transition">
+                                Pay with Cash App
+                            </a>
+
+                            <a id="paypalLink"
+                               href="https://www.paypal.me/PadillaFonseca"
+                               target="_blank" rel="noopener"
+                               class="text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-lg shadow transition">
+                                Pay with PayPal
+                            </a>
+                        </div>
+
+                        <input type="hidden" name="payment_method" id="payment_method" value="">
+                        <p id="payHint" class="text-[11px] mt-2 text-slate-500">
+                            Click one payment option, complete payment in the new tab, then come back and submit the registration.
+                        </p>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-lg shadow-lg shadow-red-200 transition duration-300 transform active:scale-[0.99]">
                         Submit Registration
                     </button>
-                    
+
                     <p class="text-[10px] text-center text-slate-400 uppercase leading-tight">By submitting, you agree to be contacted by Panamerican Taekwondo Academy regarding summer programs.</p>
                 </form>
             </div>
@@ -116,13 +149,33 @@
         const successMessage = document.getElementById('successMessage');
         const submitBtn = document.getElementById('submitBtn');
 
+        // Pay Now tracking
+        const paymentMethodInput = document.getElementById('payment_method');
+        const payHint = document.getElementById('payHint');
+
+        function setPayment(methodLabel) {
+            if (paymentMethodInput) paymentMethodInput.value = methodLabel;
+            if (payHint) payHint.textContent = `Selected: ${methodLabel}. After paying, come back and submit the registration.`;
+        }
+
+        document.getElementById('venmoLink')?.addEventListener('click', () => setPayment('Venmo'));
+        document.getElementById('cashappLink')?.addEventListener('click', () => setPayment('Cash App'));
+        document.getElementById('paypalLink')?.addEventListener('click', () => setPayment('PayPal'));
+
         form.onsubmit = async (e) => {
             e.preventDefault();
+
+            // Require payment click before submitting
+            if (!paymentMethodInput?.value) {
+                alert("Please click a payment option (Venmo, Cash App, or PayPal) before submitting.");
+                return;
+            }
+
             submitBtn.disabled = true;
             submitBtn.innerText = "PROCESSING...";
 
             const data = new FormData(form);
-            
+
             try {
                 const response = await fetch(form.action, {
                     method: 'POST',
