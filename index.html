@@ -12,13 +12,80 @@
             background-position: center;
         }
         #successMessage { display: none; }
+
+        /* Week checkbox cards */
+        .week-card input[type="checkbox"] { display: none; }
+        .week-card label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #475569;
+            background: #f8fafc;
+            user-select: none;
+        }
+        .week-card label:hover {
+            border-color: #ef4444;
+            background: #fff5f5;
+            color: #1e293b;
+        }
+        .week-card input[type="checkbox"]:checked + label {
+            border-color: #dc2626;
+            background: #dc2626;
+            color: white;
+            box-shadow: 0 4px 12px rgba(220,38,38,0.25);
+        }
+        .week-card input[type="checkbox"]:checked + label .check-icon {
+            opacity: 1;
+        }
+        .check-icon {
+            opacity: 0;
+            transition: opacity 0.15s;
+            flex-shrink: 0;
+        }
+
+        /* Price badge pulse */
+        @keyframes pricePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        .price-pop { animation: pricePop 0.25s ease; }
+
+        /* Payment buttons active state */
+        .pay-btn { transition: all 0.2s ease; }
+        .pay-btn.selected {
+            outline: 3px solid #22c55e;
+            outline-offset: 2px;
+        }
+
+        /* Early bird badge */
+        .eb-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            padding: 2px 7px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
     </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-900 scroll-smooth">
 
     <div id="top"></div>
 
-    <header class="img-src('assets/header.png') hero-bg h-80 flex items-center justify-center text-center text-white px-4">
+    <header class="hero-bg h-80 flex items-center justify-center text-center text-white px-4">
         <div>
             <h1 class="text-5xl font-black uppercase tracking-tighter italic">Summer Camp 2026</h1>
             <p class="text-2xl mt-2 text-red-500 font-bold tracking-widest uppercase">Panamerican Taekwondo Academy</p>
@@ -28,6 +95,7 @@
     <main class="max-w-5xl mx-auto p-6 -mt-16">
         <div class="grid lg:grid-cols-5 gap-8">
 
+            <!-- Info Panel -->
             <div class="lg:col-span-2 space-y-6">
                 <div class="bg-white p-8 rounded-2xl shadow-xl border-t-8 border-red-600">
                     <h2 class="text-2xl font-bold mb-4">Summer Camp Program</h2>
@@ -40,22 +108,38 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-xl">🗓️</span>
-                            <span><strong>Dates:</strong> July 6 - July 30</span>
+                            <span><strong>Dates:</strong> July 6 – July 30</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-xl">⏰</span>
-                            <span><strong>Time:</strong> 8:00 AM - 2:00 PM</span>
+                            <span><strong>Time:</strong> 8:00 AM – 2:00 PM</span>
                         </div>
                     </div>
 
-                    <div class="mt-8 bg-slate-900 text-white p-5 rounded-xl">
-                        <p class="text-xs uppercase tracking-widest text-red-400 font-bold">Early Bird Special</p>
-                        <p class="text-3xl font-black mt-1">$99<span class="text-sm font-normal text-slate-400">/ week</span></p>
-                        <p class="text-xs mt-2 italic text-slate-300">*Save $24 if registered by May 20th</p>
+                    <!-- Pricing breakdown -->
+                    <div class="mt-8 bg-slate-900 text-white p-5 rounded-xl space-y-3">
+                        <div>
+                            <p class="text-xs uppercase tracking-widest text-red-400 font-bold">
+                                <span id="ebLabel">Early Bird</span> <span id="ebStatus"></span>
+                            </p>
+                            <p class="text-3xl font-black mt-1">
+                                $<span id="pricePerWeek">99</span>
+                                <span class="text-sm font-normal text-slate-400">/ week</span>
+                            </p>
+                            <p id="fullPkgLine" class="text-xs mt-1 text-yellow-300 font-bold">Full Package: $384 <span class="line-through text-slate-500 font-normal">$480</span> — save $96!</p>
+                            <p id="regularNote" class="text-xs mt-1 italic text-slate-300" style="display:none">*Register by May 20 for early bird rates</p>
+                        </div>
+                        <div class="border-t border-slate-700 pt-3">
+                            <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Your Total</p>
+                            <p id="totalDisplay" class="text-2xl font-black text-green-400 mt-1">$0</p>
+                            <p id="weeksSummary" class="text-xs text-slate-400 mt-1">No weeks selected</p>
+                            <p id="savingsLine" class="text-xs text-yellow-300 font-bold mt-1" style="display:none"></p>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Form Panel -->
             <div class="lg:col-span-3 bg-white p-8 rounded-2xl shadow-xl relative overflow-hidden">
 
                 <div id="successMessage" class="text-center py-20">
@@ -87,51 +171,98 @@
                         <input type="text" name="student_info" required placeholder="e.g. Mateo, Age 10" class="w-full p-3 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-red-500 outline-none">
                     </div>
 
+                    <!-- Week Selection -->
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Select Session</label>
-                        <select name="session" class="w-full p-3 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-red-500 outline-none appearance-none">
-                            <option value="Full Summer Package">Full Summer Package (Best Value)</option>
-                            <option value="Single Week(s)">Specific Week(s)
-                            <ul>
-                                <li>Week 1: July 6-10</li>
-                                <li>Week 2: July 13-17</li>
-                                <li>Week 3: July 20-24</li>
-                                <li>Week 4: July 27-31</li>
-                            </ul></option>
-                            <option value="Daily Drop-in">Daily Drop-in Inquiry</option>
-                        </select>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-3">
+                            Select Week(s)
+                            <span class="eb-badge" id="ebBadge">Early Bird Active ✓</span>
+                        </label>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <!-- Full Package -->
+                            <div class="week-card col-span-2">
+                                <input type="checkbox" id="wkFull" name="weeks[]" value="Full Summer Package (All 4 Weeks)">
+                                <label for="wkFull">
+                                    <svg class="check-icon w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <span>🏆 Full Summer Package <span class="opacity-75 font-normal text-xs" id="fullPkgCardNote">(All 4 weeks – Best Value)</span></span>
+                                </label>
+                            </div>
+
+                            <div class="week-card">
+                                <input type="checkbox" id="wk1" name="weeks[]" value="Week 1: July 6-10">
+                                <label for="wk1">
+                                    <svg class="check-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Week 1 <span class="opacity-75 font-normal">Jul 6–10</span></span>
+                                </label>
+                            </div>
+                            <div class="week-card">
+                                <input type="checkbox" id="wk2" name="weeks[]" value="Week 2: July 13-17">
+                                <label for="wk2">
+                                    <svg class="check-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Week 2 <span class="opacity-75 font-normal">Jul 13–17</span></span>
+                                </label>
+                            </div>
+                            <div class="week-card">
+                                <input type="checkbox" id="wk3" name="weeks[]" value="Week 3: July 20-24">
+                                <label for="wk3">
+                                    <svg class="check-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Week 3 <span class="opacity-75 font-normal">Jul 20–24</span></span>
+                                </label>
+                            </div>
+                            <div class="week-card">
+                                <input type="checkbox" id="wk4" name="weeks[]" value="Week 4: July 27-31">
+                                <label for="wk4">
+                                    <svg class="check-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Week 4 <span class="opacity-75 font-normal">Jul 27–31</span></span>
+                                </label>
+                            </div>
+
+                            <!-- Drop-in -->
+                            <div class="week-card col-span-2">
+                                <input type="checkbox" id="wkDropin" name="weeks[]" value="Daily Drop-in Inquiry">
+                                <label for="wkDropin">
+                                    <svg class="check-icon w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Daily Drop-in Inquiry <span class="opacity-75 font-normal text-xs">(we'll contact you with rates)</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- hidden field for Formspree -->
+                        <input type="hidden" name="selected_weeks" id="selectedWeeksField">
+                        <input type="hidden" name="total_amount" id="totalAmountField">
                     </div>
 
                     <!-- Pay Now -->
                     <div class="pt-2">
-                        <p class="block text-xs font-bold uppercase text-slate-500 mb-2">Pay now (choose one)</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs font-bold uppercase text-slate-500">Pay Now (choose one)</p>
+                            <p id="payTotal" class="text-sm font-black text-red-600"></p>
+                        </div>
 
                         <div class="grid sm:grid-cols-3 gap-3">
                             <a id="venmoLink"
                                href="https://venmo.com/PanamericanTKD"
                                target="_blank" rel="noopener"
-                               class="text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-lg shadow transition">
+                               class="pay-btn text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-lg shadow transition">
                                 Pay with Venmo
                             </a>
-
                             <a id="cashappLink"
                                href="https://cash.app/$PanamericanTKD"
                                target="_blank" rel="noopener"
-                               class="text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-lg shadow transition">
+                               class="pay-btn text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-lg shadow transition">
                                 Pay with Cash App
                             </a>
-
                             <a id="paypalLink"
                                href="https://www.paypal.me/PanamericanTKD"
                                target="_blank" rel="noopener"
-                               class="text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-lg shadow transition">
+                               class="pay-btn text-center bg-slate-900 hover:bg-slate-800 text-white font-black py-3 rounded-lg shadow transition">
                                 Pay with PayPal
                             </a>
                         </div>
 
                         <input type="hidden" name="payment_method" id="payment_method" value="">
                         <p id="payHint" class="text-[11px] mt-2 text-slate-500">
-                            Click one payment option, complete payment in the new tab, then come back and submit the registration.
+                            Select your week(s), click a payment option, complete payment in the new tab, then come back and submit.
                         </p>
                     </div>
 
@@ -142,6 +273,7 @@
                     <p class="text-[10px] text-center text-slate-400 uppercase leading-tight">By submitting, you agree to be contacted by Panamerican Taekwondo Academy regarding summer programs.</p>
                 </form>
             </div>
+
             <a href="https://wa.me/message/XZ5FWOI5CSXAO1" target="_blank" style="text-decoration:none;">
                 <button style="background-color:#25D366;color:white;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;font-size:16px;">Contact us on WhatsApp</button>
             </a>
@@ -153,28 +285,192 @@
     </footer>
 
     <script>
+        // ── Pricing config ──────────────────────────────────────────────
+        const EARLY_BIRD_PRICE    = 99;   // per week before May 20
+        const REGULAR_PRICE       = 120;  // per week after May 20
+        const FULL_PKG_BASE       = 480;  // 4 × $120
+        const FULL_PKG_EARLY_DISC = 0.20; // 20% off full package before May 20
+        const FULL_PKG_EARLY      = FULL_PKG_BASE * (1 - FULL_PKG_EARLY_DISC); // $384
+        const FULL_PKG_REGULAR    = FULL_PKG_BASE; // $480
+        const EARLY_BIRD_CUTOFF   = new Date('2026-05-20T23:59:59');
+
+        const WEEK_IDS  = ['wk1', 'wk2', 'wk3', 'wk4'];
+        const FULL_ID   = 'wkFull';
+        const DROPIN_ID = 'wkDropin';
+
+        // ── Determine current tier ───────────────────────────────────────
+        const isEarlyBird  = new Date() <= EARLY_BIRD_CUTOFF;
+        const pricePerWeek = isEarlyBird ? EARLY_BIRD_PRICE : REGULAR_PRICE;
+        const fullPkgPrice = isEarlyBird ? FULL_PKG_EARLY  : FULL_PKG_REGULAR;
+
+        // Update sidebar display
+        document.getElementById('pricePerWeek').textContent = pricePerWeek;
+        document.getElementById('ebStatus').textContent = isEarlyBird ? '(Active ✓)' : '(Expired)';
+
+        // Show/hide full package savings line based on early bird
+        const fullPkgLine = document.getElementById('fullPkgLine');
+        const regularNote = document.getElementById('regularNote');
+        if (isEarlyBird) {
+            fullPkgLine.style.display = '';
+            regularNote.style.display = 'none';
+        } else {
+            fullPkgLine.style.display = 'none';
+            regularNote.style.display = '';
+        }
+
+        // Update card note for full package
+        const fpNote = document.getElementById('fullPkgCardNote');
+        if (fpNote) {
+            fpNote.textContent = isEarlyBird
+                ? `$${FULL_PKG_EARLY} — save $${FULL_PKG_BASE - FULL_PKG_EARLY}! (20% off)`
+                : `$${FULL_PKG_REGULAR} — all 4 weeks`;
+        }
+
+        if (!isEarlyBird) {
+            document.getElementById('ebBadge').textContent = 'Regular Price';
+            document.getElementById('ebBadge').style.background = '#94a3b8';
+            document.getElementById('ebLabel').textContent = 'Rate';
+        }
+
+        // ── Handle Full Package toggling ─────────────────────────────────
+        const fullChk  = document.getElementById(FULL_ID);
+        const dropinChk = document.getElementById(DROPIN_ID);
+        const weekChks = WEEK_IDS.map(id => document.getElementById(id));
+
+        fullChk.addEventListener('change', () => {
+            if (fullChk.checked) {
+                weekChks.forEach(c => { c.checked = false; });
+                dropinChk.checked = false;
+            }
+            updatePricing();
+        });
+
+        weekChks.forEach(chk => {
+            chk.addEventListener('change', () => {
+                if (chk.checked) { fullChk.checked = false; dropinChk.checked = false; }
+                updatePricing();
+            });
+        });
+
+        dropinChk.addEventListener('change', () => {
+            if (dropinChk.checked) {
+                fullChk.checked = false;
+                weekChks.forEach(c => { c.checked = false; });
+            }
+            updatePricing();
+        });
+
+        // ── Core pricing update ──────────────────────────────────────────
+        function updatePricing() {
+            let weekCount = 0;
+            let total = 0;
+            let summaryParts = [];
+            let savings = 0;
+
+            if (fullChk.checked) {
+                weekCount = 4;
+                total = fullPkgPrice;
+                summaryParts = ['Full Summer Package (4 weeks)'];
+                if (isEarlyBird) savings = FULL_PKG_BASE - FULL_PKG_EARLY;
+            } else if (dropinChk.checked) {
+                total = 0;
+                summaryParts = ['Daily Drop-in (rates TBD)'];
+            } else {
+                weekChks.forEach(chk => {
+                    if (chk.checked) {
+                        weekCount++;
+                        summaryParts.push(chk.value);
+                    }
+                });
+                total = weekCount * pricePerWeek;
+            }
+
+            // Update sidebar total
+            const totalEl = document.getElementById('totalDisplay');
+            totalEl.textContent = total > 0 ? `$${total}` : (dropinChk.checked ? 'TBD' : '$0');
+            totalEl.classList.remove('price-pop');
+            void totalEl.offsetWidth;
+            totalEl.classList.add('price-pop');
+
+            // Summary line
+            const wkSummary = document.getElementById('weeksSummary');
+            const savingsLine = document.getElementById('savingsLine');
+            if (summaryParts.length === 0) {
+                wkSummary.textContent = 'No weeks selected';
+                savingsLine.style.display = 'none';
+            } else if (dropinChk.checked) {
+                wkSummary.textContent = 'Drop-in inquiry';
+                savingsLine.style.display = 'none';
+            } else if (fullChk.checked) {
+                wkSummary.textContent = isEarlyBird
+                    ? `4 wks × $120 = $${FULL_PKG_BASE} → 20% off`
+                    : `4 weeks × $${REGULAR_PRICE}`;
+                if (savings > 0) {
+                    savingsLine.textContent = `You save $${savings}!`;
+                    savingsLine.style.display = '';
+                } else {
+                    savingsLine.style.display = 'none';
+                }
+            } else {
+                wkSummary.textContent = `${weekCount} week${weekCount !== 1 ? 's' : ''} × $${pricePerWeek}`;
+                savingsLine.style.display = 'none';
+            }
+
+            // Pay-now header
+            document.getElementById('payTotal').textContent = total > 0 ? `Total: $${total}` : '';
+
+            // Hidden Formspree fields
+            document.getElementById('selectedWeeksField').value = summaryParts.join(', ') || 'None';
+            document.getElementById('totalAmountField').value = total > 0 ? `$${total}` : (dropinChk.checked ? 'Drop-in TBD' : '$0');
+
+            updatePaymentLinks(total, summaryParts.join(', '));
+        }
+
+        function updatePaymentLinks(total, note) {
+            const noteEncoded = encodeURIComponent('Summer Camp 2026 – ' + (note || 'Registration'));
+
+            if (total > 0) {
+                document.getElementById('venmoLink').href  = `https://venmo.com/PanamericanTKD?txn=pay&amount=${total}&note=${noteEncoded}`;
+                document.getElementById('cashappLink').href = `https://cash.app/$PanamericanTKD/${total}`;
+                document.getElementById('paypalLink').href  = `https://www.paypal.me/PanamericanTKD/${total}`;
+            } else {
+                document.getElementById('venmoLink').href  = 'https://venmo.com/PanamericanTKD';
+                document.getElementById('cashappLink').href = 'https://cash.app/$PanamericanTKD';
+                document.getElementById('paypalLink').href  = 'https://www.paypal.me/PanamericanTKD';
+            }
+        }
+
+        // ── Payment method tracking ──────────────────────────────────────
+        const paymentMethodInput = document.getElementById('payment_method');
+        const payHint = document.getElementById('payHint');
+
+        ['venmoLink', 'cashappLink', 'paypalLink'].forEach(id => {
+            document.getElementById(id)?.addEventListener('click', function () {
+                const label = this.textContent.trim().replace('Pay with ', '');
+                paymentMethodInput.value = label;
+                payHint.textContent = `✓ ${label} selected. After paying, come back and submit the registration.`;
+                document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // ── Form submit ──────────────────────────────────────────────────
         const form = document.getElementById('campForm');
         const successMessage = document.getElementById('successMessage');
         const submitBtn = document.getElementById('submitBtn');
 
-        // Pay Now tracking
-        const paymentMethodInput = document.getElementById('payment_method');
-        const payHint = document.getElementById('payHint');
-
-        function setPayment(methodLabel) {
-            if (paymentMethodInput) paymentMethodInput.value = methodLabel;
-            if (payHint) payHint.textContent = `Selected: ${methodLabel}. After paying, come back and submit the registration.`;
-        }
-
-        document.getElementById('venmoLink')?.addEventListener('click', () => setPayment('Venmo'));
-        document.getElementById('cashappLink')?.addEventListener('click', () => setPayment('Cash App'));
-        document.getElementById('paypalLink')?.addEventListener('click', () => setPayment('PayPal'));
-
         form.onsubmit = async (e) => {
             e.preventDefault();
 
-            // Require payment click before submitting
-            if (!paymentMethodInput?.value) {
+            // Require at least one week selected
+            const anyWeek = fullChk.checked || dropinChk.checked || weekChks.some(c => c.checked);
+            if (!anyWeek) {
+                alert("Please select at least one week or the drop-in option.");
+                return;
+            }
+
+            // Require payment click (unless drop-in — price is TBD)
+            if (!dropinChk.checked && !paymentMethodInput.value) {
                 alert("Please click a payment option (Venmo, Cash App, or PayPal) before submitting.");
                 return;
             }
